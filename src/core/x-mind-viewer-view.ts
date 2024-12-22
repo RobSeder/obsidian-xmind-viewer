@@ -43,11 +43,19 @@ export class XMindViewerView extends FileView {
 
     async onLoadFile(file: TFile): Promise<void> {
         const binary = await this.app.vault.readBinary(file);
-        new XMindEmbedViewer({
-            el: this.contentEl,
-            file: binary,
-            region: 'global',
-            styles: this.styles,
+        
+        // Clear any previous content
+        this.contentEl.empty();
+        
+        // Wait for the viewer to be ready
+        await new Promise<void>((resolve) => {
+            new XMindEmbedViewer({
+                el: this.contentEl,
+                file: binary,
+                region: 'global',
+                styles: this.styles,
+                onInit: () => resolve()
+            });
         });
     }
 }
